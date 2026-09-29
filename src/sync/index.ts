@@ -25,7 +25,7 @@ function saveConfig(config: SyncConfig | null): void {
 
 export const sync = createSync({
   store: appStore,
-  makeApi: (token) => githubGistApi(token),
+  makeApi: (token, profile) => githubGistApi(token, profile),
   loadConfig,
   saveConfig,
 });

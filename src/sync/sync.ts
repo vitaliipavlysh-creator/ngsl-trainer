@@ -10,6 +10,8 @@ export const PUSH_DELAY = 5_000;
 
 export interface SyncConfig {
   token: string;
+  /** Імʼя профілю: кілька людей в одному GitHub-акаунті, у кожного свій Gist. */
+  profile?: string;
   gistId: string | null;
   lastSyncAt?: number;
 }
@@ -22,11 +24,12 @@ export interface SyncStatus {
   error: string | null;
   errorKind: SyncErrorKind | null;
   gistId: string | null;
+  profile: string | null;
 }
 
 export interface SyncDeps {
   store: AppStore;
-  makeApi: (token: string) => GistApi;
+  makeApi: (token: string, profile: string) => GistApi;
   loadConfig: () => SyncConfig | null;
   saveConfig: (config: SyncConfig | null) => void;
   now?: () => number;
@@ -60,10 +63,11 @@ export function createSync(deps: SyncDeps) {
     error: null,
     errorKind: null,
     gistId: config?.gistId ?? null,
+    profile: config?.profile ?? null,
   }));
 
   async function syncOnce(cfg: SyncConfig): Promise<void> {
-    const api = deps.makeApi(cfg.token);
+    const api = deps.makeApi(cfg.token, cfg.profile ?? '');
     dirty = false;
 
     let id = cfg.gistId;
@@ -139,13 +143,21 @@ export function createSync(deps: SyncDeps) {
     return running;
   }
 
-  /** Підключення: перевіряє токен, знаходить або створює Gist і одразу синхронізує. */
-  async function connect(token: string): Promise<void> {
+  /** Підключення: перевіряє токен, знаходить або створює Gist профілю й одразу синхронізує. */
+  async function connect(token: string, profile: string): Promise<void> {
     const clean = token.trim();
-    const gistId = await deps.makeApi(clean).find();
-    config = { token: clean, gistId };
+    const name = profile.trim();
+    const gistId = await deps.makeApi(clean, name).find();
+    config = { token: clean, profile: name, gistId };
     deps.saveConfig(config);
-    status.setState({ state: 'idle', error: null, errorKind: null, gistId, lastSyncAt: null });
+    status.setState({
+      state: 'idle',
+      error: null,
+      errorKind: null,
+      gistId,
+      profile: name,
+      lastSyncAt: null,
+    });
     await syncNow();
     const { state, error, errorKind } = status.getState();
     if (state === 'error') {
@@ -160,7 +172,14 @@ export function createSync(deps: SyncDeps) {
     config = null;
     clearTimeout(timer);
     deps.saveConfig(null);
-    status.setState({ state: 'off', lastSyncAt: null, error: null, errorKind: null, gistId: null });
+    status.setState({
+      state: 'off',
+      lastSyncAt: null,
+      error: null,
+      errorKind: null,
+      gistId: null,
+      profile: null,
+    });
   }
 
   /** Автоматичні тригери: зміни прогресу, повернення на вкладку, мережа. */

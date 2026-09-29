@@ -1,7 +1,59 @@
-/** Файл із прогресом у секретному Gist. */
-export const GIST_FILE = 'ngsl-trainer-progress.json';
-const DESCRIPTION = 'NGSL Trainer — прогрес (синхронізується автоматично, не редагуй вручну)';
 const API = 'https://api.github.com';
+
+const TRANSLIT: Record<string, string> = {
+  а: 'a',
+  б: 'b',
+  в: 'v',
+  г: 'h',
+  ґ: 'g',
+  д: 'd',
+  е: 'e',
+  є: 'ie',
+  ж: 'zh',
+  з: 'z',
+  и: 'y',
+  і: 'i',
+  ї: 'i',
+  й: 'i',
+  к: 'k',
+  л: 'l',
+  м: 'm',
+  н: 'n',
+  о: 'o',
+  п: 'p',
+  р: 'r',
+  с: 's',
+  т: 't',
+  у: 'u',
+  ф: 'f',
+  х: 'kh',
+  ц: 'ts',
+  ч: 'ch',
+  ш: 'sh',
+  щ: 'shch',
+  ь: '',
+  ю: 'iu',
+  я: 'ia',
+  ы: 'y',
+  э: 'e',
+  ё: 'e',
+  ъ: '',
+};
+
+/** «Віталій» → `vitalii`, « Анна » → `anna`: однакове імʼя з різних пристроїв — той самий профіль. */
+export function profileSlug(profile: string): string {
+  return [...profile.trim().toLowerCase()]
+    .map((ch) => TRANSLIT[ch] ?? ch)
+    .join('')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+/** Файл прогресу профілю в секретному Gist. Без профілю — файл першої версії синхронізації. */
+export function gistFileName(profile: string): string {
+  const slug = profileSlug(profile);
+  return slug ? `ngsl-trainer-progress-${slug}.json` : 'ngsl-trainer-progress.json';
+}
 
 /** Мінімальний інтерфейс сховища — для тестів його підміняє фейк. */
 export interface GistApi {
@@ -34,7 +86,14 @@ interface Gist {
   files: Record<string, GistFile | null>;
 }
 
-export function githubGistApi(token: string, fetchFn: typeof fetch = fetch): GistApi {
+export function githubGistApi(
+  token: string,
+  profile: string,
+  fetchFn: typeof fetch = fetch,
+): GistApi {
+  const file = gistFileName(profile);
+  const description = `NGSL Trainer — прогрес${profile.trim() ? `: ${profile.trim()}` : ''} (синхронізується автоматично, не редагуй вручну)`;
+
   async function request<T>(
     path: string,
     init: RequestInit = {},
@@ -76,7 +135,7 @@ export function githubGistApi(token: string, fetchFn: typeof fetch = fetch): Gis
     async find() {
       for (let page = 1; page <= 10; page++) {
         const gists = (await request<Gist[]>(`/gists?per_page=100&page=${page}`)) ?? [];
-        const hit = gists.find((g) => GIST_FILE in g.files);
+        const hit = gists.find((g) => file in g.files);
         if (hit) return hit.id;
         if (gists.length < 100) break;
       }
@@ -87,9 +146,9 @@ export function githubGistApi(token: string, fetchFn: typeof fetch = fetch): Gis
       const gist = await request<Gist>('/gists', {
         method: 'POST',
         body: JSON.stringify({
-          description: DESCRIPTION,
+          description,
           public: false,
-          files: { [GIST_FILE]: { content } },
+          files: { [file]: { content } },
         }),
       });
       if (!gist) throw new SyncError('server', 'Не вдалося створити Gist.');
@@ -98,12 +157,12 @@ export function githubGistApi(token: string, fetchFn: typeof fetch = fetch): Gis
 
     async read(id) {
       const gist = await request<Gist>(`/gists/${id}`, {}, true);
-      const file = gist?.files[GIST_FILE];
-      if (!file) return null;
-      if (!file.truncated) return file.content ?? null;
+      const stored = gist?.files[file];
+      if (!stored) return null;
+      if (!stored.truncated) return stored.content ?? null;
       // Файли понад 1 МБ API обрізає — тоді беремо повний вміст за raw_url.
       try {
-        const raw = await fetchFn(file.raw_url as string, { cache: 'no-store' });
+        const raw = await fetchFn(stored.raw_url as string, { cache: 'no-store' });
         return raw.ok ? await raw.text() : null;
       } catch {
         throw new SyncError('network', 'Немає зʼєднання — синхронізую, щойно зʼявиться мережа.');
@@ -113,7 +172,7 @@ export function githubGistApi(token: string, fetchFn: typeof fetch = fetch): Gis
     async write(id, content) {
       await request(`/gists/${id}`, {
         method: 'PATCH',
-        body: JSON.stringify({ files: { [GIST_FILE]: { content } } }),
+        body: JSON.stringify({ files: { [file]: { content } } }),
       });
     },
   };

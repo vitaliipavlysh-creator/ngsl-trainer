@@ -1,32 +1,35 @@
 import { describe, expect, it } from 'vitest';
 import { initialState } from '../store/state';
 import { createAppStore } from '../store/store';
-import { SyncError, type GistApi } from './gist';
+import { gistFileName, profileSlug, SyncError, type GistApi } from './gist';
 import { createSync, type SyncConfig } from './sync';
 
-/** Фейковий GitHub: спільні Gist для всіх «пристроїв». */
+/** Фейковий GitHub: спільні Gist для всіх «пристроїв» одного акаунта. */
 function fakeGitHub(validToken = 'good') {
   const gists = new Map<string, string>();
+  const files = new Map<string, string>();
   let nextId = 1;
   let writes = 0;
-  const makeApi = (token: string): GistApi => {
+  const makeApi = (token: string, profile: string): GistApi => {
+    const file = gistFileName(profile);
     const check = () => {
       if (token !== validToken) throw new SyncError('auth', 'Токен недійсний');
     };
     return {
       async find() {
         check();
-        return gists.keys().next().value ?? null;
+        return [...files].find(([, f]) => f === file)?.[0] ?? null;
       },
       async create(content) {
         check();
         const id = `g${nextId++}`;
         gists.set(id, content);
+        files.set(id, file);
         return id;
       },
       async read(id) {
         check();
-        return gists.get(id) ?? null;
+        return files.get(id) === file ? (gists.get(id) ?? null) : null;
       },
       async write(id, content) {
         check();
@@ -35,7 +38,11 @@ function fakeGitHub(validToken = 'good') {
       },
     };
   };
-  return { gists, makeApi, writes: () => writes };
+  const clear = () => {
+    gists.clear();
+    files.clear();
+  };
+  return { gists, files, clear, makeApi, writes: () => writes };
 }
 
 function device(github: ReturnType<typeof fakeGitHub>, start: number) {
@@ -67,14 +74,14 @@ describe('синхронізація через Gist', () => {
     const phone = device(github, T);
     const pc = device(github, T);
 
-    await phone.engine.connect('good');
+    await phone.engine.connect('good', 'Віталій');
     expect(github.gists.size).toBe(1);
     expect(phone.config()?.gistId).toBe('g1');
 
     phone.get().saveBlock(1, new Set([3, 7]));
     await phone.engine.syncNow();
 
-    await pc.engine.connect('good');
+    await pc.engine.connect('good', 'Віталій');
     expect(pc.get().app.words[3]?.s).toBe('queued');
     expect(Object.keys(pc.get().app.words)).toHaveLength(50);
 
@@ -100,7 +107,7 @@ describe('синхронізація через Gist', () => {
   it('без змін не пише в Gist повторно', async () => {
     const github = fakeGitHub();
     const phone = device(github, T);
-    await phone.engine.connect('good');
+    await phone.engine.connect('good', 'Віталій');
     phone.get().saveBlock(1, new Set([1]));
     await phone.engine.syncNow();
     const writes = github.writes();
@@ -113,8 +120,8 @@ describe('синхронізація через Gist', () => {
     const github = fakeGitHub();
     const phone = device(github, T);
     const pc = device(github, T);
-    await phone.engine.connect('good');
-    await pc.engine.connect('good');
+    await phone.engine.connect('good', 'Віталій');
+    await pc.engine.connect('good', 'Віталій');
 
     phone.get().saveBlock(1, new Set([1, 2]));
     phone.get().startLearn();
@@ -136,7 +143,7 @@ describe('синхронізація через Gist', () => {
   it('скасована відповідь не повертається з Gist', async () => {
     const github = fakeGitHub();
     const phone = device(github, T);
-    await phone.engine.connect('good');
+    await phone.engine.connect('good', 'Віталій');
     phone.get().saveBlock(1, new Set([1]));
     phone.get().startLearn();
     for (let i = 0; i < 1; i++) phone.get().learnNext();
@@ -154,25 +161,65 @@ describe('синхронізація через Gist', () => {
   it('видалений Gist створюється заново', async () => {
     const github = fakeGitHub();
     const phone = device(github, T);
-    await phone.engine.connect('good');
-    github.gists.clear();
+    await phone.engine.connect('good', 'Віталій');
+    github.clear();
     phone.get().saveBlock(1, new Set());
     await phone.engine.syncNow();
     expect(github.gists.size).toBe(1);
     expect(phone.config()?.gistId).toBe('g2');
   });
 
+  it('профілі в одному акаунті: у кожного свій Gist і свій прогрес', async () => {
+    const github = fakeGitHub();
+    const vitalii = device(github, T);
+    const anna = device(github, T);
+    const annaPc = device(github, T);
+
+    await vitalii.engine.connect('good', 'Віталій');
+    vitalii.get().saveBlock(1, new Set([1, 2, 3]));
+    await vitalii.engine.syncNow();
+
+    await anna.engine.connect('good', 'Анна');
+    expect(anna.get().app.words).toEqual({});
+    anna.get().saveBlock(1, new Set([40]));
+    await anna.engine.syncNow();
+
+    expect(github.gists.size).toBe(2);
+    expect([...github.files.values()].sort()).toEqual([
+      'ngsl-trainer-progress-anna.json',
+      'ngsl-trainer-progress-vitalii.json',
+    ]);
+
+    // Те саме імʼя з іншого пристрою (інший регістр і пробіли) — той самий профіль.
+    await annaPc.engine.connect('good', '  анна ');
+    expect(annaPc.get().app.words[40]?.s).toBe('queued');
+    expect(annaPc.get().app.words[1]?.s).toBe('known');
+
+    await vitalii.engine.syncNow();
+    expect(vitalii.get().app.words[1]?.s).toBe('queued');
+    expect(vitalii.get().app.words[40]?.s).toBe('known');
+    expect(vitalii.engine.status.getState().profile).toBe('Віталій');
+  });
+
+  it('імʼя профілю → назва файлу', () => {
+    expect(profileSlug('Віталій')).toBe('vitalii');
+    expect(profileSlug('  Анна ')).toBe('anna');
+    expect(profileSlug("Ольга-Марія Ґ'")).toBe('olha-mariia-g');
+    expect(profileSlug('John Smith 2')).toBe('john-smith-2');
+    expect(gistFileName('')).toBe('ngsl-trainer-progress.json');
+  });
+
   it('поганий токен — помилка підключення, конфіг не зберігається', async () => {
     const phone = device(fakeGitHub(), T);
-    await expect(phone.engine.connect('bad')).rejects.toThrow('Токен недійсний');
+    await expect(phone.engine.connect('bad', 'Віталій')).rejects.toThrow('Токен недійсний');
     expect(phone.config()).toBeNull();
     expect(phone.engine.isConnected()).toBe(false);
   });
 
   it('токен без права запису — підключення відкочується', async () => {
     const github = fakeGitHub();
-    const readOnly = (token: string): GistApi => ({
-      ...github.makeApi(token),
+    const readOnly = (token: string, profile: string): GistApi => ({
+      ...github.makeApi(token, profile),
       create: async () => {
         throw new SyncError('permission', 'Токену бракує дозволу «Gists: Read and write».');
       },
@@ -186,7 +233,7 @@ describe('синхронізація через Gist', () => {
       loadConfig: () => saved,
       saveConfig: (c) => (saved = c),
     });
-    await expect(engine.connect('good')).rejects.toThrow('Gists: Read and write');
+    await expect(engine.connect('good', 'Віталій')).rejects.toThrow('Gists: Read and write');
     expect(saved).toBeNull();
     expect(engine.status.getState().state).toBe('off');
   });
@@ -194,7 +241,7 @@ describe('синхронізація через Gist', () => {
   it('помилка під час синхронізації видна в статусі', async () => {
     const github = fakeGitHub();
     const phone = device(github, T);
-    await phone.engine.connect('good');
+    await phone.engine.connect('good', 'Віталій');
     github.gists.set('g1', '{"v": 99, "words": {}}');
     await phone.engine.syncNow();
     expect(phone.engine.status.getState().state).toBe('error');
@@ -206,7 +253,7 @@ describe('синхронізація через Gist', () => {
   it('відключення зупиняє синхронізацію, Gist лишається', async () => {
     const github = fakeGitHub();
     const phone = device(github, T);
-    await phone.engine.connect('good');
+    await phone.engine.connect('good', 'Віталій');
     phone.engine.disconnect();
     expect(phone.engine.status.getState().state).toBe('off');
     phone.get().saveBlock(1, new Set());

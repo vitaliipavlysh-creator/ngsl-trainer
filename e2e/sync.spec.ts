@@ -1,15 +1,19 @@
 import { expect, test, type BrowserContext, type Page } from '@playwright/test';
 
 const TOKEN = 'github_pat_test';
-const FILE = 'ngsl-trainer-progress.json';
 const CORS = {
   'access-control-allow-origin': '*',
   'access-control-allow-headers': 'authorization, content-type, accept, x-github-api-version',
   'access-control-allow-methods': 'GET, POST, PATCH, OPTIONS',
 };
 
-/** Імітація GitHub Gist API, спільна для всіх контекстів тесту. */
-async function mockGitHub(context: BrowserContext, gists: Map<string, string>) {
+interface StoredGist {
+  file: string;
+  content: string;
+}
+
+/** Імітація GitHub Gist API, спільна для всіх контекстів тесту (один акаунт). */
+async function mockGitHub(context: BrowserContext, gists: Map<string, StoredGist>) {
   await context.route('https://api.github.com/**', async (route) => {
     const req = route.request();
     const url = new URL(req.url());
@@ -24,27 +28,35 @@ async function mockGitHub(context: BrowserContext, gists: Map<string, string>) {
     if (req.headers()['authorization'] !== `Bearer ${TOKEN}`) {
       return json(401, { message: 'Bad credentials' });
     }
-    const gistFiles = (id: string) => ({
-      id,
-      files: { [FILE]: { content: gists.get(id), truncated: false } },
-    });
+    const view = (id: string) => {
+      const g = gists.get(id) as StoredGist;
+      return { id, files: { [g.file]: { content: g.content, truncated: false } } };
+    };
+    const incoming = () => {
+      const [file, body] = Object.entries(req.postDataJSON().files)[0] as [
+        string,
+        { content: string },
+      ];
+      return { file, content: body.content };
+    };
     if (url.pathname === '/gists' && req.method() === 'GET') {
-      return json(200, [...gists.keys()].map(gistFiles));
+      return json(200, [...gists.keys()].map(view));
     }
     if (url.pathname === '/gists' && req.method() === 'POST') {
       const id = `gist${gists.size + 1}`;
-      gists.set(id, req.postDataJSON().files[FILE].content);
-      return json(201, gistFiles(id));
+      gists.set(id, incoming());
+      return json(201, view(id));
     }
     const id = url.pathname.split('/')[2] ?? '';
     if (!gists.has(id)) return json(404, { message: 'Not Found' });
-    if (req.method() === 'PATCH') gists.set(id, req.postDataJSON().files[FILE].content);
-    return json(200, gistFiles(id));
+    if (req.method() === 'PATCH') gists.set(id, incoming());
+    return json(200, view(id));
   });
 }
 
-async function connect(page: Page, token = TOKEN) {
+async function connect(page: Page, profile: string, token = TOKEN) {
   await page.goto('./#/settings');
+  await page.getByLabel('Імʼя профілю').fill(profile);
   await page.getByLabel('Токен GitHub').fill(token);
   await page.getByRole('button', { name: 'Підключити' }).click();
 }
@@ -57,8 +69,8 @@ async function sortBlock1(page: Page, unknown: number[]) {
   await expect(page).toHaveURL(/#\/sort\/2$/);
 }
 
-test('синхронізація: телефон → Gist → ПК', async ({ browser, baseURL }) => {
-  const gists = new Map<string, string>();
+test('синхронізація: телефон → Gist → ПК, окремий профіль Анни', async ({ browser, baseURL }) => {
+  const gists = new Map<string, StoredGist>();
   const phoneCtx = await browser.newContext({ baseURL, serviceWorkers: 'block' });
   const pcCtx = await browser.newContext({ baseURL, serviceWorkers: 'block' });
   await mockGitHub(phoneCtx, gists);
@@ -66,7 +78,7 @@ test('синхронізація: телефон → Gist → ПК', async ({ br
   const phone = await phoneCtx.newPage();
   const pc = await pcCtx.newPage();
 
-  await connect(phone);
+  await connect(phone, 'Віталій');
   await expect(phone.getByText('Синхронізовано щойно')).toBeVisible();
   expect(gists.size).toBe(1);
 
@@ -75,22 +87,38 @@ test('синхронізація: телефон → Gist → ПК', async ({ br
   await phone.getByRole('button', { name: 'Синхронізувати зараз' }).click();
   await expect(phone.getByText('Синхронізовано щойно')).toBeVisible();
   await expect
-    .poll(() => Object.keys(JSON.parse(gists.get('gist1') ?? '{}').words ?? {}).length)
+    .poll(() => Object.keys(JSON.parse(gists.get('gist1')?.content ?? '{}').words ?? {}).length)
     .toBe(50);
+  expect(gists.get('gist1')?.file).toBe('ngsl-trainer-progress-vitalii.json');
 
-  await connect(pc);
+  await connect(pc, 'віталій');
   await expect(pc.getByText('Синхронізовано щойно')).toBeVisible();
   await pc.goto('./#/');
   await expect(pc.getByText('у черзі: 3')).toBeVisible();
   expect(gists.size).toBe(1);
+
+  // Анна з тим самим токеном, але своїм профілем — свій Gist і порожній прогрес.
+  const annaCtx = await browser.newContext({ baseURL, serviceWorkers: 'block' });
+  await mockGitHub(annaCtx, gists);
+  const anna = await annaCtx.newPage();
+  await connect(anna, 'Анна');
+  await expect(anna.getByText('Синхронізовано щойно')).toBeVisible();
+  await expect(anna.getByText('Профіль: Анна')).toBeVisible();
+  await anna.goto('./#/');
+  await expect(anna.getByRole('heading', { name: 'Почнімо!' })).toBeVisible();
+  expect([...gists.values()].map((g) => g.file).sort()).toEqual([
+    'ngsl-trainer-progress-anna.json',
+    'ngsl-trainer-progress-vitalii.json',
+  ]);
+  await annaCtx.close();
 
   await phoneCtx.close();
   await pcCtx.close();
 });
 
 test('неправильний токен — зрозуміла помилка', async ({ page, context }) => {
-  await mockGitHub(context, new Map());
-  await connect(page, 'wrong');
+  await mockGitHub(context, new Map<string, StoredGist>());
+  await connect(page, 'Анна', 'wrong');
   await expect(page.getByRole('alert')).toHaveText(/Токен недійсний/);
   await expect(page.getByRole('button', { name: 'Підключити' })).toBeVisible();
 });
