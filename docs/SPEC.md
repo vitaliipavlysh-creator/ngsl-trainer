@@ -174,7 +174,7 @@ interface AppState {
 
 ### 7.2 Локально
 
-- IndexedDB, запис після кожної відповіді.
+- **[змінено]** localStorage, синхронний запис після кожної відповіді: відповідь не губиться, навіть якщо закрити вкладку одразу після неї (асинхронний IndexedDB може не встигнути). Стан — до ~200 КБ при ліміті 5 МБ.
 - **[нове]** `navigator.storage.persist()` — щоб браузер не видалив дані. Важливо для iOS: Safari може стерти дані сайту, який не відкривали 7 днів, якщо він **не** встановлений на головний екран → в UI підказка «Встанови на головний екран».
 - **[нове]** Версія схеми + міграції, щоб оновлення застосунку не ламали прогрес.
 
@@ -221,7 +221,7 @@ interface AppState {
 - Застосунок встановлюється як PWA (Android, iOS, десктоп Chrome).
 - Автотести: логіка (планувальник, пропуск на всіх 2801 прикладі, відмінки, злиття) і e2e на 360 px та 1280 px.
 
-**Стек:** React + TypeScript + Vite, Tailwind, Zustand + IndexedDB (idb-keyval), vite-plugin-pwa, React Router (HashRouter — для GitHub Pages), Vitest, Playwright. Графіки — простий SVG/CSS без бібліотек. Хостинг — GitHub Pages через GitHub Actions.
+**Стек:** React + TypeScript + Vite, Tailwind, Zustand + localStorage, vite-plugin-pwa, власний hash-роутер (для GitHub Pages), Vitest, Playwright. Графіки — простий SVG/CSS без бібліотек. Хостинг — GitHub Pages через GitHub Actions.
 
 ## 11. Звідки покращення (конкуренти)
 

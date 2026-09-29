@@ -50,5 +50,7 @@ export interface AppState {
   settings: Settings;
   history: History;
   today: Today;
+  /** Час скидання прогресу: при синхронізації старіші записи відкидаються. */
+  resetAt?: number;
   updatedAt: number;
 }

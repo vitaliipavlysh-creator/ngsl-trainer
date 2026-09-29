@@ -1,9 +1,102 @@
 @import 'tailwindcss';
+@import '@fontsource-variable/literata/wght.css';
+@import '@fontsource-variable/jetbrains-mono/wght.css';
+
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
 
 :root {
-  color-scheme: light dark;
+  --bg: #f6f5f1;
+  --surface: #ffffff;
+  --surface-2: #eeece6;
+  --text: #1b1d21;
+  --muted: #5b616b;
+  --border: #e0ddd5;
+  --accent: #2f5bd3;
+  --on-accent: #ffffff;
+  --on-status: #ffffff;
+  --known: #25804f;
+  --learning: #c7860a;
+  --queued: #c93c33;
+  --mastered: #2f5bd3;
+  --new: #c4c7cd;
+  color-scheme: light;
+}
+
+[data-theme='dark'] {
+  --bg: #111418;
+  --surface: #1a1e24;
+  --surface-2: #242a32;
+  --text: #e9eaed;
+  --muted: #9ba2ad;
+  --border: #2d333c;
+  --accent: #7596ff;
+  --on-accent: #0b1020;
+  --on-status: #0b1020;
+  --known: #4cc285;
+  --learning: #f0b43c;
+  --queued: #f26b60;
+  --mastered: #7596ff;
+  --new: #4a505a;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-fg: var(--text);
+  --color-muted: var(--muted);
+  --color-line: var(--border);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
+  --color-on-status: var(--on-status);
+  --color-known: var(--known);
+  --color-learning: var(--learning);
+  --color-queued: var(--queued);
+  --color-mastered: var(--mastered);
+  --color-new: var(--new);
+}
+
+@theme {
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-serif: 'Literata Variable', Georgia, 'Times New Roman', serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --animate-appear: appear 180ms ease-out;
+
+  @keyframes appear {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+html {
+  background: var(--bg);
 }
 
 body {
-  @apply bg-white text-neutral-900 antialiased dark:bg-neutral-950 dark:text-neutral-100;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+}
+
+button {
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
