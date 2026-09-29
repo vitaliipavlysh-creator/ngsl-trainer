@@ -90,7 +90,7 @@ rank	word	translation	example	form
 89	should	слід, варто	You should try it.	should
 90	need	потребувати; потреба	I need your help.	need
 91	much	багато (незлічуване)	Thank you very much.	much
-92	right	правильний; правий; право	You are right.	right
+92	right	правий (маєш рацію), правильний; праворуч; право	You are right.	right
 93	how	як	How are you?	How
 94	back	назад; спина	I will be back soon.	back
 95	mean	означати, мати на увазі	What do you mean?	mean
@@ -290,7 +290,7 @@ rank	word	translation	example	form
 289	train	потяг; тренувати(ся)	I take the train to work.	train
 290	possible	можливий	Is it possible?	possible
 291	actually	насправді	Actually, I don't agree.	Actually
-292	rather	скоріше, досить	I would rather stay home.	rather
+292	rather	досить, скоріше; (would rather — краще б)	I would rather stay home.	rather
 293	view	погляд, вид; розглядати	What is your view on this?	view
 294	together	разом	Let's do it together.	together
 295	consider	розглядати, вважати	Please consider my offer.	consider
@@ -310,7 +310,7 @@ rank	word	translation	example	form
 309	stand	стояти; терпіти	Please stand here.	stand
 310	whole	цілий, весь	I worked the whole day.	whole
 311	yet	ще (не), вже (у питаннях)	I haven't finished yet.	yet
-312	rate	ставка, рівень, темп; оцінювати	The exchange rate is high.	rate
+312	rate	ставка, курс, рівень; оцінювати	The exchange rate is high.	rate
 313	care	турбота; піклуватися	Take care!	care
 314	expect	очікувати	I expect an answer today.	expect
 315	effect	ефект, вплив	It has a good effect.	effect
@@ -329,7 +329,7 @@ rank	word	translation	example	form
 328	probably	ймовірно	I will probably come later.	probably
 329	suggest	пропонувати, радити	I suggest we start now.	suggest
 330	past	минуле; повз	Forget the past.	past
-331	power	сила, влада, енергія	The power is off.	power
+331	power	сила, влада; електроенергія	The power is off.	power
 332	test	тест; перевіряти	I have a test tomorrow.	test
 333	visit	відвідувати; візит	I want to visit my parents.	visit
 334	center	центр	I live in the city center.	center
@@ -388,7 +388,7 @@ rank	word	translation	example	form
 387	drive	їхати (за кермом), водити	Can you drive?	drive
 388	along	вздовж	We walked along the river.	along
 389	type	тип; друкувати	What type of job do you want?	type
-390	sound	звук; звучати	That will sound strange.	sound
+390	sound	звук; звучати	That sounds strange.	sounds
 391	eye	око	Close one eye.	eye
 392	music	музика	I listen to music every day.	music
 393	game	гра	It was a great game.	game
@@ -499,7 +499,7 @@ rank	word	translation	example	form
 498	charge	плата; заряджати; звинувачувати	I need to charge my phone.	charge
 499	finally	нарешті, врешті	Finally, we finished.	Finally
 500	sign	знак; підписувати	Sign here, please.	Sign
-501	claim	стверджувати; претензія, заява	He will claim that he is right.	claim
+501	claim	стверджувати; претензія, заява	He claims that he is right.	claims
 502	relationship	стосунки, зв'язок	We have a good relationship with the client.	relationship
 503	travel	подорожувати; подорожі	I love to travel.	travel
 504	enjoy	насолоджуватися, отримувати задоволення	Enjoy your meal!	Enjoy
@@ -562,7 +562,7 @@ rank	word	translation	example	form
 561	accept	приймати, погоджуватися	I accept your offer.	accept
 562	society	суспільство	Technology changes society.	society
 563	technology	технологія	I love new technology.	technology
-564	mention	згадувати	Don't mention it.	mention
+564	mention	згадувати	He didn't mention the salary.	mention
 565	choice	вибір	It's your choice.	choice
 566	save	зберігати, рятувати, економити	Save the file.	Save
 567	common	поширений, спільний	It's a common mistake.	common
@@ -572,7 +572,7 @@ rank	word	translation	example	form
 571	material	матеріал	Send me the material for the meeting.	material
 572	limit	межа, ліміт; обмежувати	There is no limit.	limit
 573	listen	слухати	Listen to me.	Listen
-574	due	очікуваний; належний (due to — через)	The report is due on Friday.	due
+574	due	має бути зроблений (до терміну), очікуваний; (due to — через)	The report is due on Friday.	due
 575	wrong	неправильний	Something is wrong.	wrong
 576	foot	ступня, нога; фут	My foot hurts.	foot
 577	effort	зусилля	Thank you for your effort.	effort
@@ -585,7 +585,7 @@ rank	word	translation	example	form
 584	reduce	зменшувати	We need to reduce costs.	reduce
 585	personal	особистий	It's a personal question.	personal
 586	ground	земля, ґрунт	Sit on the ground.	ground
-587	animal	тварина	Do you have an animal at home?	animal
+587	animal	тварина	The cat is my favorite animal.	animal
 588	arrive	прибувати	When will you arrive?	arrive
 589	patient	пацієнт; терплячий	Be patient.	patient
 590	current	поточний, теперішній	What is your current salary?	current
@@ -627,7 +627,7 @@ rank	word	translation	example	form
 626	simply	просто	I simply don't know.	simply
 627	bank	банк; берег	I need to go to the bank.	bank
 628	firm	фірма; твердий	He works at a law firm.	firm
-629	cell	клітина; камера (тюремна)	This is a cell phone.	cell
+629	cell	клітина; камера; (cell phone — мобільний телефон)	This is a cell phone.	cell
 630	article	стаття	I read an interesting article.	article
 631	fast	швидкий, швидко	He runs fast.	fast
 632	attack	атака; нападати	The attack was at night.	attack
@@ -640,7 +640,7 @@ rank	word	translation	example	form
 639	affect	впливати	Stress can affect your health.	affect
 640	drop	падати, кидати; крапля	Don't drop the glass.	drop
 641	recent	недавній	This is a recent photo.	recent
-642	relate	стосуватися, пов'язувати	I can relate to that.	relate
+642	relate	стосуватися, пов'язувати; (relate to — розуміти, співчувати)	This question doesn't relate to the job.	relate
 643	official	офіційний; посадовець	This is the official website.	official
 644	financial	фінансовий	We have financial problems.	financial
 645	miss	сумувати; пропускати, не влучити	I miss you.	miss
@@ -784,7 +784,7 @@ rank	word	translation	example	form
 783	quickly	швидко	Please answer quickly.	quickly
 784	interview	співбесіда, інтерв'ю	I have a job interview tomorrow.	interview
 785	agreement	угода, згода	We signed the agreement.	agreement
-786	release	випускати, звільняти; реліз	The new version will release in May.	release
+786	release	випускати, звільняти; реліз	We will release the new version in May.	release
 787	tax	податок	How much tax do you pay?	tax
 788	solution	рішення (проблеми)	We need a quick solution.	solution
 789	capital	столиця; капітал	Kyiv is the capital of Ukraine.	capital
@@ -805,7 +805,7 @@ rank	word	translation	example	form
 804	treat	ставитися; пригощати; лікувати	Treat people with respect.	Treat
 805	identify	визначати, ідентифікувати	We need to identify the problem.	identify
 806	loss	втрата, збиток	The company had a big loss.	loss
-807	shall	(майбутній час, пропозиція)	Shall we start?	Shall
+807	shall	(у пропозиціях: Shall we…? — Може, …?); (майбутній час, офіц.)	Shall we start?	Shall
 808	modern	сучасний	I like modern design.	modern
 809	pressure	тиск	I work well under pressure.	pressure
 810	bus	автобус	I take the bus to work.	bus
@@ -813,7 +813,7 @@ rank	word	translation	example	form
 812	yourself	сам, себе (ти)	Tell me about yourself.	yourself
 813	supply	постачання; постачати	We supply water to the city.	supply
 814	village	село	My grandparents live in a village.	village
-815	worth	вартий	It's worth it.	worth
+815	worth	вартий (it's worth it — воно того варте)	It's worth it.	worth
 816	natural	природний	It's a natural reaction.	natural
 817	express	висловлювати; експрес	It's hard to express in English.	express
 818	indicate	вказувати	The results indicate a problem.	indicate
@@ -901,7 +901,7 @@ rank	word	translation	example	form
 900	guess	вгадувати, припускати	Guess who called me.	Guess
 901	fun	веселощі; веселий	Have fun!	fun
 902	protect	захищати	We must protect our data.	protect
-903	resource	ресурс	We don't have enough resource for this.	resource
+903	resource	ресурс	We don't have enough resources for this.	resources
 904	science	наука	I love science.	science
 905	disease	хвороба	It's a rare disease.	disease
 906	balance	баланс, рівновага	Work-life balance is important.	balance
@@ -911,7 +911,7 @@ rank	word	translation	example	form
 910	basic	базовий, основний	I have basic knowledge of Python.	basic
 911	encourage	заохочувати, підбадьорювати	I encourage you to try.	encourage
 912	hair	волосся	She has long hair.	hair
-913	male	чоловічий; чоловік	The candidate is male.	male
+913	male	чоловічий; чоловік	He is a male nurse.	male
 914	operate	працювати, керувати; оперувати	We operate in ten countries.	operate
 915	reflect	відображати, обдумувати	The price will reflect the quality.	reflect
 916	exercise	вправа; тренуватися	Do this exercise.	exercise
@@ -958,7 +958,7 @@ rank	word	translation	example	form
 957	track	трек, доріжка; відстежувати	I track my progress every week.	track
 958	dance	танцювати; танець	Can you dance?	dance
 959	completely	повністю	I completely forgot.	completely
-960	female	жіночий; жінка	The candidate is female.	female
+960	female	жіночий; жінка	She is the first female director of the company.	female
 961	responsibility	відповідальність, обов'язок	It's my responsibility.	responsibility
 962	original	оригінальний, початковий	This is the original document.	original
 963	sister	сестра	My sister lives in Lviv.	sister
@@ -980,7 +980,7 @@ rank	word	translation	example	form
 979	version	версія	This is the new version.	version
 980	conversation	розмова	We had a nice conversation.	conversation
 981	somebody	хтось	Somebody called you.	Somebody
-982	pound	фунт	One pound is about fifty hryvnias.	pound
+982	pound	фунт	It costs ten pounds.	pounds
 983	magazine	журнал	I read a fashion magazine.	magazine
 984	shape	форма; формувати	I'm in good shape.	shape
 985	sea	море	I love the sea.	sea
@@ -1039,7 +1039,7 @@ rank	word	translation	example	form
 1038	advice	порада	Can you give me some advice?	advice
 1039	handle	впоратися; ручка	I can handle it.	handle
 1040	glass	скло, склянка	Can I have a glass of water?	glass
-1041	trial	випробування; суд	We offer a free trial.	trial
+1041	trial	випробування, пробний період; суд	We offer a free trial.	trial
 1042	stress	стрес; наголошувати	I have a lot of stress at work.	stress
 1043	radio	радіо	I listen to the radio in the car.	radio
 1044	administration	адміністрація	Talk to the administration.	administration
@@ -1075,7 +1075,7 @@ rank	word	translation	example	form
 1074	wonderful	чудовий	What a wonderful day!	wonderful
 1075	flat	квартира; плаский	I rent a flat in Kyiv.	flat
 1076	absolutely	абсолютно	You are absolutely right.	absolutely
-1077	flow	потік; текти	The work flow is simple.	flow
+1077	flow	потік; текти	There is a steady flow of candidates.	flow
 1078	fair	справедливий; ярмарок	It's not fair!	fair
 1079	additional	додатковий	Do you have additional questions?	additional
 1080	responsible	відповідальний	Who is responsible for this?	responsible
@@ -1148,7 +1148,7 @@ rank	word	translation	example	form
 1147	feed	годувати	Feed the cat, please.	Feed
 1148	pain	біль	I have a pain in my back.	pain
 1149	sector	сектор	I work in the public sector.	sector
-1150	mistake	помилка	Everyone makes a mistake sometimes.	mistake
+1150	mistake	помилка	Everyone makes mistakes.	mistakes
 1151	ensure	гарантувати, забезпечувати	Please ensure the door is locked.	ensure
 1152	satisfy	задовольняти	It's hard to satisfy everyone.	satisfy
 1153	chief	головний; шеф	He is the chief engineer.	chief
@@ -1224,8 +1224,8 @@ rank	word	translation	example	form
 1223	traffic	дорожній рух, трафік	I was stuck in traffic.	traffic
 1224	improvement	покращення	I see a big improvement.	improvement
 1225	tool	інструмент	This tool is very useful.	tool
-1226	consequence	наслідок	Think about the consequence.	consequence
-1227	circumstance	обставина	Under no circumstance do this.	circumstance
+1226	consequence	наслідок	Think about the consequences.	consequences
+1227	circumstance	обставина	Under no circumstances should you do this.	circumstances
 1228	smoke	дим; курити	Do you smoke?	smoke
 1229	reaction	реакція	What was his reaction?	reaction
 1230	rain	дощ	It's going to rain.	rain
@@ -1321,7 +1321,7 @@ rank	word	translation	example	form
 1320	commit	зобов'язуватися; скоювати	I commit to finishing it today.	commit
 1321	obvious	очевидний	The answer is obvious.	obvious
 1322	jump	стрибати; стрибок	Jump!	Jump
-1323	weapon	зброя	The army needs weapon systems.	weapon
+1323	weapon	зброя	The police found a weapon.	weapon
 1324	relatively	відносно	It's relatively cheap.	relatively
 1325	host	господар, ведучий; приймати	Who will host the party?	host
 1326	winter	зима	Winter is cold here.	Winter
@@ -1453,7 +1453,7 @@ rank	word	translation	example	form
 1452	domestic	внутрішній, домашній	It's a domestic flight.	domestic
 1453	load	вантаж; завантажувати	The page takes long to load.	load
 1454	belief	переконання, віра	It's my belief.	belief
-1455	troop	військо, загін (troops — війська)	Each troop has ten soldiers.	troop
+1455	troop	військо, загін (troops — війська)	The troops came home.	troops
 1456	technical	технічний	It's a technical interview.	technical
 1457	remind	нагадувати	Remind me tomorrow.	Remind
 1458	arrangement	домовленість, організація	We have a special arrangement.	arrangement
@@ -1477,7 +1477,7 @@ rank	word	translation	example	form
 1476	ad	реклама, оголошення	I saw your ad on LinkedIn.	ad
 1477	fee	плата, внесок	What is the fee?	fee
 1478	hall	зал, коридор	Wait in the hall.	hall
-1479	regulation	правило, регулювання	Follow the safety regulation.	regulation
+1479	regulation	правило, регулювання	Follow the safety regulations.	regulations
 1480	escape	втікати; втеча	We need to escape the city.	escape
 1481	studio	студія	She has a small studio.	studio
 1482	proper	належний, правильний	Use the proper tool.	proper
@@ -1602,7 +1602,7 @@ rank	word	translation	example	form
 1601	youth	молодість, молодь	In my youth, I played football.	youth
 1602	lock	замок; замикати	Lock the door.	Lock
 1603	fuel	паливо	We need more fuel.	fuel
-1604	expectation	очікування	My expectation is a fair salary.	expectation
+1604	expectation	очікування	What are your salary expectations?	expectations
 1605	employment	працевлаштування, зайнятість	Employment is growing.	Employment
 1606	celebrate	святкувати	Let's celebrate!	celebrate
 1607	sexual	сексуальний, статевий	Sexual harassment is not allowed.	Sexual
@@ -1615,7 +1615,7 @@ rank	word	translation	example	form
 1614	sheet	аркуш; простирадло	Take a sheet of paper.	sheet
 1615	engine	двигун	The engine is broken.	engine
 1616	cast	акторський склад; кидати	The cast of the film is great.	cast
-1617	notion	поняття, уявлення	I have no notion of what to do.	notion
+1617	notion	поняття, уявлення	That's a strange notion.	notion
 1618	conservative	консервативний	He is very conservative.	conservative
 1619	journey	подорож	Have a good journey!	journey
 1620	opposition	опозиція, протидія	There is strong opposition.	opposition
@@ -1668,7 +1668,7 @@ rank	word	translation	example	form
 1667	significantly	значно	Prices went up significantly.	significantly
 1668	hill	пагорб	The house is on a hill.	hill
 1669	considerable	значний	It takes considerable time.	considerable
-1670	instruction	інструкція	Read the instruction first.	instruction
+1670	instruction	інструкція	Read the instructions first.	instructions
 1671	intelligence	інтелект; розвідка	He has high intelligence.	intelligence
 1672	ideal	ідеальний; ідеал	It's an ideal place.	ideal
 1673	folk	народний; люди (розм.)	I like folk music.	folk
@@ -1753,7 +1753,7 @@ rank	word	translation	example	form
 1752	furthermore	більше того	Furthermore, the job is remote.	Furthermore
 1753	accuse	звинувачувати	Don't accuse me.	accuse
 1754	scientific	науковий	It's a scientific fact.	scientific
-1755	wage	заробітна плата (погодинна)	The minimum wage is going up.	wage
+1755	wage	заробітна плата (робітника), оплата праці	The minimum wage is going up.	wage
 1756	absence	відсутність	Sorry for my absence.	absence
 1757	construct	будувати, конструювати	They will construct a new bridge.	construct
 1758	remark	зауваження; зауважувати	That was a rude remark.	remark
@@ -1779,7 +1779,7 @@ rank	word	translation	example	form
 1778	enormous	величезний	It's an enormous building.	enormous
 1779	sweet	солодкий; милий	This cake is too sweet.	sweet
 1780	permanent	постійний	Is it a permanent job?	permanent
-1781	emotion	емоція	Don't show your emotion.	emotion
+1781	emotion	емоція	Don't hide your emotions.	emotions
 1782	pursue	переслідувати, прагнути	I want to pursue a career in HR.	pursue
 1783	tall	високий (про людину, будівлю)	He is very tall.	tall
 1784	urge	закликати; спонукання	I urge you to try.	urge
@@ -1814,7 +1814,7 @@ rank	word	translation	example	form
 1813	seed	насіння	Plant the seed.	seed
 1814	salary	зарплата	What is your expected salary?	salary
 1815	illustrate	ілюструвати	Let me illustrate with an example.	illustrate
-1816	imply	натякати, мати на увазі	What do you imply?	imply
+1816	imply	натякати, мати на увазі	What are you implying?	implying
 1817	breakfast	сніданок	I skip breakfast.	breakfast
 1818	temporary	тимчасовий	It's a temporary job.	temporary
 1819	liberal	ліберальний	He has liberal views.	liberal
@@ -1834,7 +1834,7 @@ rank	word	translation	example	form
 1833	existence	існування	I didn't know of its existence.	existence
 1834	bone	кістка	He broke a bone.	bone
 1835	panel	панель, комісія	The panel will interview you.	panel
-1836	prime	головний, першочерговий	He is the prime candidate.	prime
+1836	prime	головний, основний; (prime minister — прем'єр-міністр)	The prime minister gave a speech.	prime
 1837	appointment	зустріч (запланована), призначення	I have a doctor's appointment.	appointment
 1838	emphasize	наголошувати	I want to emphasize this point.	emphasize
 1839	maximum	максимум	The maximum is 100.	maximum
@@ -1880,7 +1880,7 @@ rank	word	translation	example	form
 1879	fundamental	фундаментальний	It's a fundamental change.	fundamental
 1880	dish	страва; тарілка	What is your favorite dish?	dish
 1881	abroad	за кордоном	I want to work abroad.	abroad
-1882	soul	душа	Bless your soul.	soul
+1882	soul	душа	Music is food for the soul.	soul
 1883	capable	здатний	He is capable of more.	capable
 1884	defeat	поразка; перемагати	We will not accept defeat.	defeat
 1885	presidential	президентський	The presidential election is soon.	presidential
@@ -1926,7 +1926,7 @@ rank	word	translation	example	form
 1925	mathematics	математика	I was good at mathematics.	mathematics
 1926	upper	верхній	It's on the upper floor.	upper
 1927	creation	створення	The creation of the app took a year.	creation
-1928	occupy	займати, окупувати	The meeting will occupy the whole room.	occupy
+1928	occupy	займати, окупувати	This seat is occupied.	occupied
 1929	outline	план, схема; окреслювати	Give me a short outline.	outline
 1930	sufficient	достатній	It's sufficient.	sufficient
 1931	update	оновлення; оновлювати	Update the app.	Update
@@ -2212,7 +2212,7 @@ rank	word	translation	example	form
 2211	competitor	конкурент	Who is our main competitor?	competitor
 2212	alcohol	алкоголь	I don't drink alcohol.	alcohol
 2213	festival	фестиваль	Let's go to the festival.	festival
-2214	vegetable	овоч	Eat a vegetable with every meal.	vegetable
+2214	vegetable	овоч	Eat more vegetables.	vegetables
 2215	van	фургон	We rented a van.	van
 2216	confident	впевнений	Be confident!	confident
 2217	planet	планета	Save the planet.	planet
@@ -2235,7 +2235,7 @@ rank	word	translation	example	form
 2234	harm	шкода; шкодити	It won't do any harm.	harm
 2235	consult	консультуватися	Consult your doctor.	Consult
 2236	pink	рожевий	She likes pink.	pink
-2237	shadow	тінь	Sit in the shadow.	shadow
+2237	shadow	тінь	The tree casts a long shadow.	shadow
 2238	strip	смуга; роздягатися	Cut it into a thin strip.	strip
 2239	smooth	гладкий, плавний	The process was smooth.	smooth
 2240	intervention	втручання	It needs intervention.	intervention
@@ -2409,7 +2409,7 @@ rank	word	translation	example	form
 2408	motor	мотор	The motor is broken.	motor
 2409	survival	виживання	It's a matter of survival.	survival
 2410	counter	прилавок; протидіяти	Pay at the counter.	counter
-2411	possess	володіти	He will possess great skills one day.	possess
+2411	possess	володіти	She possesses great talent.	possesses
 2412	permission	дозвіл	Ask for permission.	permission
 2413	valley	долина	The village is in a valley.	valley
 2414	float	плавати (на поверхні)	Wood can float.	float
@@ -2569,7 +2569,7 @@ rank	word	translation	example	form
 2568	damn	чорт (лайка)	Damn, I forgot!	Damn
 2569	distinct	окремий, чіткий	There are two distinct groups.	distinct
 2570	humor	гумор	He has a good sense of humor.	humor
-2571	limitation	обмеження	Know your limitation.	limitation
+2571	limitation	обмеження	Know your limitations.	limitations
 2572	indication	ознака	Is there any indication of problems?	indication
 2573	stability	стабільність	We offer stability.	stability
 2574	wise	мудрий	It's a wise decision.	wise
@@ -2650,7 +2650,7 @@ rank	word	translation	example	form
 2649	continuous	безперервний	It's continuous learning.	continuous
 2650	golden	золотий	It's a golden opportunity.	golden
 2651	stamp	марка, печатка	I need a stamp.	stamp
-2652	guideline	рекомендація, настанова	Follow the guideline.	guideline
+2652	guideline	рекомендація, настанова	Follow the guidelines.	guidelines
 2653	envelope	конверт	Put it in the envelope.	envelope
 2654	knife	ніж	Use a knife.	knife
 2655	biological	біологічний	It's a biological process.	biological
@@ -2720,10 +2720,10 @@ rank	word	translation	example	form
 2719	tent	намет	We slept in a tent.	tent
 2720	precise	точний	Be precise.	precise
 2721	distant	далекий	It's a distant memory.	distant
-2722	stranger	незнайомець	Don't talk to a stranger.	stranger
+2722	stranger	незнайомець	Don't talk to strangers.	strangers
 2723	shade	тінь (від сонця); відтінок	Let's sit in the shade.	shade
 2724	grain	зерно	Ukraine exports grain.	grain
-2725	situate	розташовувати (situated — розташований)	Where will they situate the new office?	situate
+2725	situate	розташовувати (situated — розташований)	The hotel is situated near the sea.	situated
 2726	summarize	підсумовувати	Summarize the text.	Summarize
 2727	leap	стрибок; стрибати	It's a big leap forward.	leap
 2728	snap	клацнути; зламатися	Snap your fingers.	Snap
