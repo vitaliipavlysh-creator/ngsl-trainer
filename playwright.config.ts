@@ -5,7 +5,10 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   reporter: process.env.CI ? 'github' : 'list',
-  use: { baseURL: 'http://localhost:4173', serviceWorkers: 'block' },
+  use: {
+    baseURL: 'http://localhost:4173',
+    serviceWorkers: 'block',
+  },
   projects: [
     { name: 'mobile', use: { ...devices['Pixel 7'], viewport: { width: 360, height: 740 } } },
     {

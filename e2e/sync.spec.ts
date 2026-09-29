@@ -71,10 +71,20 @@ async function sortBlock1(page: Page, unknown: number[]) {
 
 test('синхронізація: телефон → Gist → ПК, окремий профіль Анни', async ({ browser, baseURL }) => {
   const gists = new Map<string, StoredGist>();
-  const phoneCtx = await browser.newContext({ baseURL, serviceWorkers: 'block' });
-  const pcCtx = await browser.newContext({ baseURL, serviceWorkers: 'block' });
+  const phoneCtx = await browser.newContext({
+    baseURL,
+    serviceWorkers: 'block',
+  });
+  const pcCtx = await browser.newContext({
+    baseURL,
+    serviceWorkers: 'block',
+  });
   await mockGitHub(phoneCtx, gists);
   await mockGitHub(pcCtx, gists);
+  // Headless Chromium не підтримує сповіщень — імітуємо стан «ще не питали», як на телефоні.
+  await pcCtx.addInitScript(() =>
+    Object.defineProperty(Notification, 'permission', { get: () => 'default' }),
+  );
   const phone = await phoneCtx.newPage();
   const pc = await pcCtx.newPage();
 
@@ -93,12 +103,18 @@ test('синхронізація: телефон → Gist → ПК, окреми
 
   await connect(pc, 'віталій');
   await expect(pc.getByText('Синхронізовано щойно')).toBeVisible();
+  // Після підключення синхронізації зʼявляється перемикач нагадувань.
+  await expect(pc.getByRole('switch', { name: /Щоденне нагадування/ })).toBeVisible();
+  await expect(pc.getByLabel('Час нагадування')).toHaveValue('21');
   await pc.goto('./#/');
   await expect(pc.getByText('у черзі: 3')).toBeVisible();
   expect(gists.size).toBe(1);
 
   // Анна з тим самим токеном, але своїм профілем — свій Gist і порожній прогрес.
-  const annaCtx = await browser.newContext({ baseURL, serviceWorkers: 'block' });
+  const annaCtx = await browser.newContext({
+    baseURL,
+    serviceWorkers: 'block',
+  });
   await mockGitHub(annaCtx, gists);
   const anna = await annaCtx.newPage();
   await connect(anna, 'Анна');
@@ -127,8 +143,14 @@ test('резервна копія: зберегти файл і відновит
   browser,
   baseURL,
 }) => {
-  const a = await browser.newContext({ baseURL, serviceWorkers: 'block' });
-  const b = await browser.newContext({ baseURL, serviceWorkers: 'block' });
+  const a = await browser.newContext({
+    baseURL,
+    serviceWorkers: 'block',
+  });
+  const b = await browser.newContext({
+    baseURL,
+    serviceWorkers: 'block',
+  });
   const pageA = await a.newPage();
   const pageB = await b.newPage();
 

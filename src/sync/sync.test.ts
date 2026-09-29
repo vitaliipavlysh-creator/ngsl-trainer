@@ -3,11 +3,13 @@ import { initialState } from '../store/state';
 import { createAppStore } from '../store/store';
 import { gistFileName, profileSlug, SyncError, type GistApi } from './gist';
 import { createSync, type SyncConfig } from './sync';
+import { withSubscription } from '../core/reminder';
 
 /** Фейковий GitHub: спільні Gist для всіх «пристроїв» одного акаунта. */
 function fakeGitHub(validToken = 'good') {
   const gists = new Map<string, string>();
   const files = new Map<string, string>();
+  const extra = new Map<string, string>();
   let nextId = 1;
   let writes = 0;
   const makeApi = (token: string, profile: string): GistApi => {
@@ -36,13 +38,21 @@ function fakeGitHub(validToken = 'good') {
         writes++;
         gists.set(id, content);
       },
+      async readFile(id, name) {
+        check();
+        return extra.get(`${id}/${name}`) ?? null;
+      },
+      async writeFile(id, name, content) {
+        check();
+        extra.set(`${id}/${name}`, content);
+      },
     };
   };
   const clear = () => {
     gists.clear();
     files.clear();
   };
-  return { gists, files, clear, makeApi, writes: () => writes };
+  return { gists, files, extra, clear, makeApi, writes: () => writes };
 }
 
 function device(github: ReturnType<typeof fakeGitHub>, start: number) {
@@ -207,6 +217,37 @@ describe('синхронізація через Gist', () => {
     expect(profileSlug("Ольга-Марія Ґ'")).toBe('olha-mariia-g');
     expect(profileSlug('John Smith 2')).toBe('john-smith-2');
     expect(gistFileName('')).toBe('ngsl-trainer-progress.json');
+  });
+
+  it('нагадування: файл у Gist профілю, підписки двох пристроїв не губляться', async () => {
+    const github = fakeGitHub();
+    const phone = device(github, T);
+    const pc = device(github, T);
+    await phone.engine.connect('good', 'Анна');
+    await pc.engine.connect('good', 'Анна');
+    const sub = (n: number) => ({
+      endpoint: `https://push/${n}`,
+      keys: { p256dh: 'p', auth: 'a' },
+    });
+    const opts = { hour: 21, timeZone: 'Europe/Kyiv', now: T };
+
+    await phone.engine.saveReminder((cur) => withSubscription(cur, sub(1), true, opts));
+    await pc.engine.saveReminder((cur) =>
+      withSubscription(cur, sub(2), true, { ...opts, hour: 20 }),
+    );
+
+    const saved = await phone.engine.loadReminder();
+    expect(saved?.subscriptions.map((s) => s.endpoint)).toEqual([
+      'https://push/1',
+      'https://push/2',
+    ]);
+    expect(saved?.hour).toBe(20);
+    expect([...github.extra.keys()]).toEqual(['g1/ngsl-trainer-push-anna.json']);
+  });
+
+  it('нагадування без синхронізації — зрозуміла помилка', async () => {
+    const phone = device(fakeGitHub(), T);
+    await expect(phone.engine.loadReminder()).rejects.toThrow('Спершу підключи синхронізацію');
   });
 
   it('поганий токен — помилка підключення, конфіг не зберігається', async () => {

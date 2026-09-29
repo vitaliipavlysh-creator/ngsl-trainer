@@ -41,6 +41,8 @@ export default defineConfig({
       workbox: {
         // Шрифти для англійських слів — лише латиниця; решта підмножин не потрібна офлайн.
         globPatterns: ['**/*.{js,css,html,svg,png}', '**/*-latin-wght-normal-*.woff2'],
+        // Обробка пуш-нагадувань (public/push-sw.js).
+        importScripts: ['push-sw.js'],
       },
     }),
   ],

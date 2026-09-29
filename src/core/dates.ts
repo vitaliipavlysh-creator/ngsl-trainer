@@ -27,3 +27,27 @@ export function dayLabel(day: number, today: number): string {
   if (day === today + 1) return 'завтра';
   return dayFormat.format(dayToDate(day));
 }
+
+/** Номер навчального дня в заданому часовому поясі (для нагадувань, що рахуються на сервері). */
+export function dayNumberInZone(date: Date, timeZone: string, startHour = DAY_START_HOUR): number {
+  const { y, m, d, h } = zonedParts(date, timeZone);
+  return Math.round(Date.UTC(y, m - 1, d - (h < startHour ? 1 : 0)) / MS_PER_DAY);
+}
+
+/** Година (0–23) у заданому часовому поясі. */
+export function hourInZone(date: Date, timeZone: string): number {
+  return zonedParts(date, timeZone).h;
+}
+
+function zonedParts(date: Date, timeZone: string) {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone,
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    hourCycle: 'h23',
+  }).formatToParts(date);
+  const get = (type: string) => Number(parts.find((p) => p.type === type)?.value);
+  return { y: get('year'), m: get('month'), d: get('day'), h: get('hour') };
+}

@@ -3,7 +3,8 @@ import { fingerprint, mergeStates } from '../core/merge';
 import type { AppState } from '../core/types';
 import { migrate } from '../store/state';
 import type { AppStore } from '../store/store';
-import { SyncError, type GistApi, type SyncErrorKind } from './gist';
+import type { ReminderFile } from '../core/reminder';
+import { reminderFileName, SyncError, type GistApi, type SyncErrorKind } from './gist';
 
 /** Затримка відправки після змін — щоб не смикати GitHub на кожну відповідь. */
 export const PUSH_DELAY = 5_000;
@@ -201,9 +202,47 @@ export function createSync(deps: SyncDeps) {
     void syncNow();
   }
 
+  /** Gist профілю для файлу нагадувань; якщо його ще немає — створюємо синхронізацією. */
+  async function reminderTarget() {
+    if (!config) throw new SyncError('auth', 'Спершу підключи синхронізацію.');
+    if (!config.gistId) await syncNow();
+    const cfg = config;
+    if (!cfg?.gistId) throw new SyncError('server', status.getState().error ?? 'Gist не знайдено.');
+    return {
+      api: deps.makeApi(cfg.token, cfg.profile ?? ''),
+      id: cfg.gistId,
+      name: reminderFileName(cfg.profile ?? ''),
+    };
+  }
+
+  function parseReminder(text: string | null): ReminderFile | null {
+    try {
+      return text ? (JSON.parse(text) as ReminderFile) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  async function loadReminder(): Promise<ReminderFile | null> {
+    const { api, id, name } = await reminderTarget();
+    return parseReminder(await api.readFile(id, name));
+  }
+
+  /** Читає актуальний файл, застосовує зміну й записує — інші пристрої профілю не губляться. */
+  async function saveReminder(
+    update: (current: ReminderFile | null) => ReminderFile,
+  ): Promise<ReminderFile> {
+    const { api, id, name } = await reminderTarget();
+    const next = update(parseReminder(await api.readFile(id, name)));
+    await api.writeFile(id, name, JSON.stringify(next));
+    return next;
+  }
+
   return {
     status,
     syncNow,
+    loadReminder,
+    saveReminder,
     connect,
     disconnect,
     start,

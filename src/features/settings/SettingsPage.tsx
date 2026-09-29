@@ -1,3 +1,4 @@
+import { navigate } from '../../app/router';
 import type { DailyNewLimit, Theme } from '../../core/types';
 import { useSpeechAvailable } from '../../lib/speech';
 import { appStore, useApp } from '../../store/store';
@@ -7,6 +8,7 @@ import { Segmented } from '../../ui/Segmented';
 import { showToast } from '../../ui/toast';
 import { Toggle } from '../../ui/Toggle';
 import { BackupCard } from './BackupCard';
+import { ReminderCard } from './ReminderCard';
 import { SyncCard } from './SyncCard';
 
 const LIMITS = [10, 15, 20, 25].map((n) => ({ value: n as DailyNewLimit, label: String(n) }));
@@ -74,6 +76,7 @@ export function SettingsPage() {
       </Card>
 
       <SyncCard />
+      <ReminderCard />
       <BackupCard />
 
       <Card>
@@ -86,6 +89,10 @@ export function SettingsPage() {
           Скинути прогрес
         </Button>
       </Card>
+
+      <Button variant="ghost" onClick={() => navigate('/guide')}>
+        Як вчитися з найбільшим ефектом →
+      </Button>
 
       <p className="text-center text-xs text-muted">
         NGSL Trainer · 2801 слово ·{' '}

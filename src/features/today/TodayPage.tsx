@@ -80,9 +80,14 @@ export function TodayPage() {
             2801 найуживаніше слово поділено на 56 блоків. У кожному блоці тапни слова, яких не
             знаєш, — вони стануть у чергу на вивчення. Потім щодня: повторення й кілька нових слів.
           </p>
-          <Button variant="primary" className="mt-3" onClick={() => navigate('/sort/1')}>
-            Відсортувати блок 1
-          </Button>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Button variant="primary" onClick={() => navigate('/sort/1')}>
+              Відсортувати блок 1
+            </Button>
+            <Button variant="ghost" onClick={() => navigate('/guide')}>
+              Як вчитися
+            </Button>
+          </div>
         </Card>
       )}
 
@@ -187,6 +192,20 @@ export function TodayPage() {
         <p className="mb-3 text-sm text-muted">«знаю» + «вивчено» з 2801 слова</p>
         <StatusBar counts={counts} legend />
       </Card>
+
+      <button
+        type="button"
+        onClick={() => navigate('/guide')}
+        className="flex min-h-11 items-center justify-between rounded-2xl border border-line bg-surface p-4 text-left"
+      >
+        <span>
+          <span className="block font-medium">Як вчитися з найбільшим ефектом</span>
+          <span className="block text-sm text-muted">11 коротких порад і щоденний ритуал</span>
+        </span>
+        <span aria-hidden="true" className="text-muted">
+          →
+        </span>
+      </button>
 
       <InstallHint />
     </div>

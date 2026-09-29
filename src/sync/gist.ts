@@ -49,6 +49,11 @@ export function profileSlug(profile: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
+/** Файл нагадувань профілю — лежить у Gist профілю поруч із прогресом. */
+export function reminderFileName(profile: string): string {
+  return `ngsl-trainer-push-${profileSlug(profile) || 'default'}.json`;
+}
+
 /** Файл прогресу профілю в секретному Gist. Без профілю — файл першої версії синхронізації. */
 export function gistFileName(profile: string): string {
   const slug = profileSlug(profile);
@@ -63,6 +68,9 @@ export interface GistApi {
   /** `null` — Gist або файл видалено. */
   read(id: string): Promise<string | null>;
   write(id: string, content: string): Promise<void>;
+  /** Довільний файл у тому самому Gist (напр., налаштування нагадувань). */
+  readFile(id: string, name: string): Promise<string | null>;
+  writeFile(id: string, name: string, content: string): Promise<void>;
 }
 
 export type SyncErrorKind = 'auth' | 'permission' | 'rate' | 'network' | 'server';
@@ -131,6 +139,27 @@ export function githubGistApi(
     throw new SyncError('server', `GitHub відповів помилкою ${res.status} — спробую пізніше.`);
   }
 
+  async function readFile(id: string, name: string): Promise<string | null> {
+    const gist = await request<Gist>(`/gists/${id}`, {}, true);
+    const stored = gist?.files[name];
+    if (!stored) return null;
+    if (!stored.truncated) return stored.content ?? null;
+    // Файли понад 1 МБ API обрізає — тоді беремо повний вміст за raw_url.
+    try {
+      const raw = await fetchFn(stored.raw_url as string, { cache: 'no-store' });
+      return raw.ok ? await raw.text() : null;
+    } catch {
+      throw new SyncError('network', 'Немає зʼєднання — синхронізую, щойно зʼявиться мережа.');
+    }
+  }
+
+  async function writeFile(id: string, name: string, content: string): Promise<void> {
+    await request(`/gists/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ files: { [name]: { content } } }),
+    });
+  }
+
   return {
     async find() {
       for (let page = 1; page <= 10; page++) {
@@ -155,25 +184,9 @@ export function githubGistApi(
       return gist.id;
     },
 
-    async read(id) {
-      const gist = await request<Gist>(`/gists/${id}`, {}, true);
-      const stored = gist?.files[file];
-      if (!stored) return null;
-      if (!stored.truncated) return stored.content ?? null;
-      // Файли понад 1 МБ API обрізає — тоді беремо повний вміст за raw_url.
-      try {
-        const raw = await fetchFn(stored.raw_url as string, { cache: 'no-store' });
-        return raw.ok ? await raw.text() : null;
-      } catch {
-        throw new SyncError('network', 'Немає зʼєднання — синхронізую, щойно зʼявиться мережа.');
-      }
-    },
-
-    async write(id, content) {
-      await request(`/gists/${id}`, {
-        method: 'PATCH',
-        body: JSON.stringify({ files: { [file]: { content } } }),
-      });
-    },
+    readFile,
+    writeFile,
+    read: (id) => readFile(id, file),
+    write: (id, content) => writeFile(id, file, content),
   };
 }

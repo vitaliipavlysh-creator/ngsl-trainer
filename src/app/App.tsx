@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { GuidePage } from '../features/guide/GuidePage';
 import { LearnPage } from '../features/session/LearnPage';
 import { ReviewPage } from '../features/session/ReviewPage';
 import { SettingsPage } from '../features/settings/SettingsPage';
@@ -91,6 +92,7 @@ export function App({ loadError }: { loadError: Error | null }) {
   let page: ReactNode;
   if (sort) page = <SortPage block={sort[1] ? Number(sort[1]) : null} />;
   else if (path === '/settings') page = <SettingsPage />;
+  else if (path === '/guide') page = <GuidePage />;
   else page = <TodayPage />;
 
   return withToaster(
