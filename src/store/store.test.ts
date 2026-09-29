@@ -63,7 +63,7 @@ describe('вивчення нових', () => {
   });
 
   it('«Я це знаю» і скасування відповіді', () => {
-    const { get } = setup();
+    const { get, advance } = setup();
     get().saveBlock(1, new Set([1, 2, 3, 4, 5, 6]));
     get().startLearn();
     get().learnKnown();
@@ -76,8 +76,10 @@ describe('вивчення нових', () => {
     const rank = get().session?.s.queue[0]?.rank as number;
     get().answer(true);
     expect(get().app.words[rank]?.s).toBe('learning');
+    advance(0.001);
     get().undo();
-    expect(get().app.words[rank]).toEqual(before.words[rank]);
+    expect({ ...get().app.words[rank], u: 0 }).toEqual({ ...before.words[rank], u: 0 });
+    expect(get().app.words[rank]?.u).toBeGreaterThan(before.words[rank]?.u ?? 0);
     expect(get().app.today).toEqual(before.today);
     expect(get().app.history).toEqual(before.history);
     expect(get().session?.s.queue[0]?.rank).toBe(rank);
@@ -144,7 +146,7 @@ describe('повторення', () => {
     get().answer(true);
     expect(get().app.words[1]?.st).toBe(2);
     get().undo();
-    expect(get().app.words[1]).toEqual(before);
+    expect(get().app.words[1]).toEqual({ ...before, u: get().app.words[1]?.u });
     expect(get().session?.s.queue[0]?.rank).toBe(1);
   });
 });

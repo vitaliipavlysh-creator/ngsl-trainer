@@ -2,6 +2,7 @@ import { useStore } from 'zustand';
 import { createStore } from 'zustand/vanilla';
 import { blockRanks } from '../core/blocks';
 import { dayNumber } from '../core/dates';
+import { mergeStates } from '../core/merge';
 import {
   answerReview,
   dueOrder,
@@ -25,7 +26,7 @@ import {
   type Rng,
 } from '../core/session';
 import { newLeft, recordHistory, rollToday } from '../core/stats';
-import type { AppState, History, Settings, Today, WordState } from '../core/types';
+import type { AppState, History, Settings, Today, WordState, WordsMap } from '../core/types';
 import { initialState } from './state';
 
 /** Скільки слів додає «Ще 5 слів». */
@@ -58,6 +59,8 @@ export interface Store {
   setWord(rank: number, action: WordAction): void;
   updateSettings(patch: Partial<Settings>): void;
   resetProgress(): void;
+  /** Відновлення з файлу: об'єднати з поточним прогресом або замінити його. */
+  importState(imported: AppState, mode: 'merge' | 'replace'): void;
 
   /** Повертає `false`, якщо вчити нічого (черга порожня або ліміт вичерпано). */
   startLearn(extra?: boolean): boolean;
@@ -124,7 +127,33 @@ export function createAppStore(opts: { clock?: () => number; rng?: Rng } = {}) {
       updateSettings(patch) {
         const { now } = ctx();
         const { app } = get();
-        set({ app: { ...app, settings: { ...app.settings, ...patch }, updatedAt: now } });
+        set({
+          app: {
+            ...app,
+            settings: { ...app.settings, ...patch },
+            settingsAt: now,
+            updatedAt: now,
+          },
+        });
+      },
+
+      importState(imported, mode) {
+        const { now } = ctx();
+        const { app } = get();
+        if (mode === 'merge') {
+          set({ app: { ...mergeStates(app, imported), updatedAt: now } });
+          return;
+        }
+        // «Замінити»: імпортовані записи стають найновішими, а все старіше — скинутим,
+        // щоб синхронізація не повернула попередній прогрес.
+        const words: WordsMap = {};
+        for (const [rank, ws] of Object.entries(imported.words))
+          words[Number(rank)] = { ...ws, u: now };
+        set({
+          app: { ...imported, words, resetAt: now - 1, settingsAt: now, updatedAt: now },
+          session: null,
+          undoStack: [],
+        });
       },
 
       resetProgress() {
@@ -244,13 +273,15 @@ export function createAppStore(opts: { clock?: () => number; rng?: Rng } = {}) {
         const { undoStack, app, session } = get();
         const entry = undoStack.at(-1);
         if (!entry || !session) return;
+        const { now } = ctx();
         const words = { ...app.words };
         for (const [rank, prev] of entry.words) {
-          if (prev) words[rank] = prev;
+          // Новий `u`: інакше синхронізація повернула б скасовану відповідь з іншого пристрою.
+          if (prev) words[rank] = { ...prev, u: now };
           else delete words[rank];
         }
         set({
-          app: { ...app, words, today: entry.today, history: entry.history, updatedAt: ctx().now },
+          app: { ...app, words, today: entry.today, history: entry.history, updatedAt: now },
           session: { ...entry.session, revealed: false, step: session.step + 1 },
           undoStack: undoStack.slice(0, -1),
         });

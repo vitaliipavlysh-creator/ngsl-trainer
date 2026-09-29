@@ -52,5 +52,7 @@ export interface AppState {
   today: Today;
   /** Час скидання прогресу: при синхронізації старіші записи відкидаються. */
   resetAt?: number;
+  /** Час останньої зміни налаштувань — для злиття між пристроями. */
+  settingsAt?: number;
   updatedAt: number;
 }

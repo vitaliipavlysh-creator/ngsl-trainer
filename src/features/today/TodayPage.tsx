@@ -16,6 +16,7 @@ import {
 import { formatPercent } from '../../lib/format';
 import { useDay } from '../../lib/useDay';
 import { useApp } from '../../store/store';
+import { useSync } from '../../sync';
 import { startLearn, startReview } from '../session/start';
 import { Button } from '../../ui/Button';
 import { Card } from '../../ui/Card';
@@ -40,6 +41,10 @@ export function TodayPage() {
   const limit = app.settings.dailyNew + today.extra;
   const queue = counts.queued;
   const fresh = counts.new === TOTAL_WORDS;
+  // Офлайн — нормальна ситуація; показуємо лише помилки, що потребують дії.
+  const syncError = useSync((s) =>
+    s.state === 'error' && s.errorKind !== 'network' ? s.error : null,
+  );
 
   return (
     <div className="flex flex-col gap-4">
@@ -57,6 +62,16 @@ export function TodayPage() {
           </span>
         )}
       </div>
+
+      {syncError && (
+        <button
+          type="button"
+          onClick={() => navigate('/settings')}
+          className="rounded-xl border border-queued/40 bg-queued/10 p-3 text-left text-sm"
+        >
+          <b>Синхронізація не працює.</b> {syncError}
+        </button>
+      )}
 
       {fresh && (
         <Card className="border-accent/40 bg-accent/5">

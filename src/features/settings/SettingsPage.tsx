@@ -6,6 +6,8 @@ import { Card } from '../../ui/Card';
 import { Segmented } from '../../ui/Segmented';
 import { showToast } from '../../ui/toast';
 import { Toggle } from '../../ui/Toggle';
+import { BackupCard } from './BackupCard';
+import { SyncCard } from './SyncCard';
 
 const LIMITS = [10, 15, 20, 25].map((n) => ({ value: n as DailyNewLimit, label: String(n) }));
 const THEMES: { value: Theme; label: string }[] = [
@@ -71,11 +73,14 @@ export function SettingsPage() {
         />
       </Card>
 
+      <SyncCard />
+      <BackupCard />
+
       <Card>
-        <h2 className="font-medium">Дані</h2>
+        <h2 className="font-medium">Скидання</h2>
         <p className="mt-1 text-sm text-muted">
-          Прогрес зберігається на цьому пристрої після кожної відповіді. Синхронізація між телефоном
-          і ПК зʼявиться в наступній версії.
+          Прогрес зберігається на цьому пристрої після кожної відповіді. Скидання синхронізується на
+          інші пристрої.
         </p>
         <Button variant="danger" className="mt-3" onClick={reset}>
           Скинути прогрес
